@@ -146,6 +146,13 @@ items["full_repair_kit"] = Consumable(
 )
 
 # --- KEY ITEMS ---
+items["data_chip"] = KeyItem(
+    item_id="data_chip",
+    name="Phoenix's Data Chip",
+    description="A small encrypted data chip containing information Phoenix wanted to share. It interfaces directly with your neural implant.",
+    quest_id="main_quest_1"
+)
+
 items["ai_core_fragment"] = KeyItem(
     item_id="ai_core_fragment",
     name="AI Core Fragment",

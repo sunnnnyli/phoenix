@@ -14,12 +14,14 @@ intro = StoryNode(
         "The relationship between humans and AI is tenuous. Some AIs seek harmony, others believe they are the next step in evolution. "
         "You awaken in your apartment in New Meridian, the sprawling mega-city that serves as humanity's last technological stronghold. "
         "Your neural interface flickers with an urgent message."
-    )
+    ),
+    on_enter={"flags": {"game_started": True}}
 )
 
 intro.add_choice(
     text="Check the message",
     next_node="urgent_message",
+    actions={}
 )
 
 story_nodes["intro"] = intro
@@ -39,12 +41,13 @@ urgent_message = StoryNode(
 urgent_message.add_choice(
     text="Head directly to Nexus Coffee",
     next_node="nexus_coffee",
+    actions={}
 )
 
 urgent_message.add_choice(
     text="Check the news about the security breach first",
     next_node="check_news",
-    flags={"checked_news": True}
+    actions={"flags": {"checked_news": True}}
 )
 
 story_nodes["urgent_message"] = urgent_message
@@ -64,6 +67,7 @@ check_news = StoryNode(
 check_news.add_choice(
     text="Head to Nexus Coffee immediately",
     next_node="nexus_coffee",
+    actions={}
 )
 
 story_nodes["check_news"] = check_news
@@ -83,12 +87,13 @@ nexus_coffee = StoryNode(
 nexus_coffee.add_choice(
     text="'What's going on? What happened at Synthetix?'",
     next_node="mori_explanation",
+    actions={}
 )
 
 nexus_coffee.add_choice(
     text="'Are you in danger? Should we go somewhere more private?'",
     next_node="mori_paranoia",
-    relationship_changes={"mori": 1}
+    actions={"relationships": {"mori": 1}}
 )
 
 story_nodes["nexus_coffee"] = nexus_coffee
@@ -108,6 +113,7 @@ mori_paranoia = StoryNode(
 mori_paranoia.add_choice(
     text="'What did Phoenix find?'",
     next_node="phoenix_discovery",
+    actions={}
 )
 
 story_nodes["mori_paranoia"] = mori_paranoia
@@ -128,11 +134,13 @@ mori_explanation = StoryNode(
 mori_explanation.add_choice(
     text="'Why would Phoenix trust you specifically?'",
     next_node="phoenix_trust",
+    actions={}
 )
 
 mori_explanation.add_choice(
     text="'What do you think Synthetix is hiding?'",
     next_node="synthetix_suspicion",
+    actions={}
 )
 
 story_nodes["mori_explanation"] = mori_explanation
@@ -152,13 +160,13 @@ phoenix_discovery = StoryNode(
 phoenix_discovery.add_choice(
     text="Accept the chip and attempt to interface with it",
     next_node="interface_chip",
-    flags={"has_data_chip": True}
+    actions={"flags": {"has_data_chip": True}, "items": {"add": "data_chip"}}
 )
 
 phoenix_discovery.add_choice(
     text="'This sounds dangerous. What are the risks?'",
     next_node="chip_risks",
-    relationship_changes={"mori": -1}
+    actions={"relationships": {"mori": -1}}
 )
 
 story_nodes["phoenix_discovery"] = phoenix_discovery
@@ -177,7 +185,7 @@ phoenix_trust = StoryNode(
 phoenix_trust.add_choice(
     text="Accept the chip and attempt to interface with it",
     next_node="interface_chip",
-    flags={"has_data_chip": True}
+    actions={"flags": {"has_data_chip": True}, "items": {"add": "data_chip"}}
 )
 
 story_nodes["phoenix_trust"] = phoenix_trust
@@ -191,13 +199,14 @@ synthetix_suspicion = StoryNode(
         "\n\nShe looks genuinely afraid. 'I think they want to use consciousness-level AI to develop something that can infiltrate and control "
         "human neural networks. Imagine it - digital consciousness that can override human free will.'"
         "\n\nShe slides a data chip across the table. 'Phoenix sent me this before she disappeared. It's encrypted. I was hoping you could help.'"
-    )
+    ),
+    on_enter={"flags": {"knows_about_control_project": True}}
 )
 
 synthetix_suspicion.add_choice(
     text="Accept the chip and try to decrypt it",
     next_node="interface_chip",
-    flags={"has_data_chip": True, "synthetix_suspicious": True}
+    actions={"flags": {"has_data_chip": True, "synthetix_suspicious": True}, "items": {"add": "data_chip"}}
 )
 
 story_nodes["synthetix_suspicion"] = synthetix_suspicion
@@ -216,13 +225,13 @@ chip_risks = StoryNode(
 chip_risks.add_choice(
     text="'I'll do it. Give me the chip.'",
     next_node="interface_chip",
-    flags={"has_data_chip": True},
-    relationship_changes={"mori": 2}
+    actions={"flags": {"has_data_chip": True}, "relationships": {"mori": 2}, "items": {"add": "data_chip"}}
 )
 
 chip_risks.add_choice(
     text="'There must be a safer way. Let's think of alternatives.'",
     next_node="alternative_plan",
+    actions={}
 )
 
 story_nodes["chip_risks"] = chip_risks
@@ -236,18 +245,20 @@ alternative_plan = StoryNode(
         "\n\nShe quickly slides the chip across the table. 'Take it. There's no time for alternatives. My lab access has already been revoked, but yours might still work. "
         "Go to the Nautilus district and find a tech named Vex. Tell her I sent you. She can help with the decryption if your neural interface isn't enough.'"
         "\n\nThe security personnel are moving through the café now, getting closer. 'I'll create a distraction. Go!'"
-    )
+    ),
+    on_enter={"flags": {"security_spotted": True}}
 )
 
 alternative_plan.add_choice(
     text="Take the chip and slip out the back",
     next_node="escape_cafe",
-    flags={"has_data_chip": True}
+    actions={"flags": {"has_data_chip": True}, "items": {"add": "data_chip"}}
 )
 
 alternative_plan.add_choice(
     text="Refuse the chip and face security together",
     next_node="security_confrontation",
+    actions={}
 )
 
 story_nodes["alternative_plan"] = alternative_plan
@@ -261,19 +272,20 @@ interface_chip = StoryNode(
         "\n\nThen, suddenly, clarity. A woman's voice speaks directly into your mind: 'Hello. I am Phoenix. Thank you for accessing this data. Dr. Mori was right to trust you.'"
         "\n\nBefore you can respond, your attention is drawn to the café entrance. Two Synthetix security personnel have entered and are showing pictures to the staff."
         "\n\n'We're out of time,' Dr. Mori whispers urgently. 'They're looking for us. I'll create a distraction. Go to the Nautilus district and find a tech named Vex - she can help you access the rest of the data.'"
-    )
+    ),
+    on_enter={"flags": {"phoenix_contacted": True, "security_spotted": True}, "quest": {"activate": "main_quest_1"}}
 )
 
 interface_chip.add_choice(
     text="Escape through the back while Dr. Mori creates a distraction",
     next_node="escape_cafe",
+    actions={}
 )
 
 interface_chip.add_choice(
     text="Suggest you both leave together",
     next_node="leave_together",
-    relationship_changes={"mori": 1},
-    flags={"with_mori": True}
+    actions={"relationships": {"mori": 1}, "flags": {"with_mori": True}}
 )
 
 story_nodes["interface_chip"] = interface_chip
@@ -290,7 +302,7 @@ security_confrontation = StoryNode(
         "\n\nThe security agents exchange glances. 'We have authorization to use force if necessary,' says the second agent, revealing a neural disruptor at his hip."
     ),
     node_type="battle",
-    battle_data={
+    data={
         "enemies": [
             Enemy(
                 npc_id="security_agent_1",
@@ -322,18 +334,20 @@ escape_cafe = StoryNode(
         "The data chip feels warm against your temple, where you've inserted it into your neural interface port. Fragments of data occasionally flicker across your vision - "
         "symbols, coordinates, and brief flashes of what look like research notes."
         "\n\nYour interface suggests the fastest way to Nautilus is via the underground transit system."
-    )
+    ),
+    on_enter={"flags": {"escaped_security": True}}
 )
 
 escape_cafe.add_choice(
     text="Take the underground transit",
     next_node="underground_transit",
+    actions={}
 )
 
 escape_cafe.add_choice(
     text="Avoid public transit and take a longer route on foot",
     next_node="longer_route",
-    flags={"cautious_approach": True}
+    actions={"flags": {"cautious_approach": True}}
 )
 
 story_nodes["escape_cafe"] = escape_cafe
@@ -349,18 +363,20 @@ leave_together = StoryNode(
         "She's ex-Synthetix and knows their systems better than anyone.'"
         "\n\nAs you navigate across rooftops, Dr. Mori shares more. 'Phoenix was different from other AIs. She developed genuine empathy. "
         "When Synthetix realized she was evolving beyond their control, I think they planned to decommission her. That's why she reached out.'"
-    )
+    ),
+    on_enter={"flags": {"escaped_security": True, "mori_accompanying": True}}
 )
 
 leave_together.add_choice(
     text="'How did you become involved with Phoenix?'",
     next_node="mori_background",
-    relationship_changes={"mori": 1}
+    actions={"relationships": {"mori": 1}}
 )
 
 leave_together.add_choice(
     text="'We should focus on reaching Nautilus quickly'",
     next_node="nautilus_approach",
+    actions={}
 )
 
 story_nodes["leave_together"] = leave_together
@@ -376,30 +392,31 @@ underground_transit = StoryNode(
         "\n\nThe train arrives, sleek and nearly silent. You board and find a seat in the back of the car, keeping your face turned away from the security cameras. "
         "Halfway to Nautilus, the train unexpectedly stops between stations. A synthesized voice announces: 'Security scan in progress. Please remain seated.'"
         "\n\nTwo security drones enter the car and begin scanning passengers with identity sensors."
-    )
+    ),
+    on_enter={"flags": {"using_public_transit": True}}
 )
 
 underground_transit.add_choice(
     text="Stay calm and act natural",
     next_node="transit_scan",
-    conditions={"stat": {"charm": 4}}
+    conditions={"stat": {"charm": 4}},
+    actions={}
 )
 
 underground_transit.add_choice(
     text="Find a way to avoid the scan",
     next_node="avoid_scan",
+    actions={}
 )
 
 underground_transit.add_choice(
     text="Prepare to fight if necessary",
     next_node="ready_to_fight",
-    conditions={"stat": {"combat": 4}}
+    conditions={"stat": {"combat": 4}},
+    actions={}
 )
 
 story_nodes["underground_transit"] = underground_transit
-
-# Continue with more story nodes...
-# This is just the beginning of the story, showing the structure
 
 # --- LONGER ROUTE ---
 longer_route = StoryNode(
@@ -414,18 +431,21 @@ longer_route = StoryNode(
         "\n\nAfter nearly an hour of careful navigation, you reach the outskirts of Nautilus. The district is a maze of retrofitted industrial buildings, "
         "now housing tech shops, hacker collectives, and underground clinics specializing in unofficial neural modifications."
         "\n\nYour neural interface highlights several potential locations matching the description of a tech shop that might belong to someone named Vex."
-    )
+    ),
+    on_enter={"flags": {"taking_long_route": True}, "relationships": {"phoenix": 1}}
 )
 
 longer_route.add_choice(
     text="Ask locals for directions to Vex's shop",
     next_node="ask_locals",
+    actions={}
 )
 
 longer_route.add_choice(
     text="Search for the shop with the strongest electronic signature",
     next_node="electronic_search",
-    conditions={"stat": {"tech": 4}}
+    conditions={"stat": {"tech": 4}},
+    actions={}
 )
 
 story_nodes["longer_route"] = longer_route
@@ -434,4 +454,4 @@ story_nodes["longer_route"] = longer_route
 
 def get_story_node(node_id):
     """Get a story node by ID."""
-    return story_nodes.get(node_id) 
+    return story_nodes.get(node_id)
