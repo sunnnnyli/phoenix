@@ -138,12 +138,13 @@ class GameEngine:
         chosen_option = valid_choices[choice_index]
         
         # Process choice consequences
-        if chosen_option.flags:
-            for flag, value in chosen_option.flags.items():
-                self.game_state.add_story_flag(flag, value)
+        if chosen_option.actions:
+            if 'flags' in chosen_option.actions:
+                for flag, value in chosen_option.actions['flags'].items():
+                    self.game_state.add_story_flag(flag, value)
                 
-        if chosen_option.relationship_changes:
-            for char_id, value in chosen_option.relationship_changes.items():
+        if 'relationships' in chosen_option.actions:
+            for char_id, value in chosen_option.actions['relationships'].items():
                 self.game_state.add_relationship(char_id, value)
                 
         # Process next node
